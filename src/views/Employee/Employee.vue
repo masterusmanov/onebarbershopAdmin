@@ -150,7 +150,6 @@
   <script setup>
   import {ref as vueRef, reactive, computed, onMounted} from 'vue'
   import { employeeStore } from '../../stores/employee';
-  import { toast } from 'vue3-toastify';
   import {useRouter} from 'vue-router'
   import { employees } from '../../service/employee';
   import { Modal } from 'flowbite-vue'
@@ -300,7 +299,7 @@
     if (file.value) {
         try {
         console.log(file.value);
-        const storageRef = firebaseRef(storage, 'images/' + file.value.name);
+        const storageRef = firebaseRef(storage, 'employee/' + file.value.name);
         const uploadTask = uploadBytes(storageRef, file.value);
 
         uploadTask

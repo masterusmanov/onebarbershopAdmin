@@ -32,19 +32,23 @@
                                 <input v-model="contactInfo.type" type="text" name="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Введите тип продукта!" required="">
                             </div>
                             <div>
-                                <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Наименование товара</label>
-                                <input v-model="contactInfo.description" type="text" name="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Введите название продукта!" required="">
+                                <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Наименование товара</label>
+                                <input v-model="contactInfo.title" type="text" name="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Введите название продукта!" required="">
                             </div>
                             <div>
                                 <label for="price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Цена продукта</label>
                                 <input v-model="contactInfo.price" type="text" name="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Цена продукта" required="">
                             </div>
                             <div>
+                                <label for="mass" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Масса</label>
+                                <input v-model="contactInfo.mass" type="text" name="mass" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Введите вес" required="">
+                            </div>
+                            <div>
                                 <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Описание продукта</label>
                                 <textarea v-model="contactInfo.description" name="description" id="description" cols="30" rows="10" placeholder="Описание продукта" class="w-full h-36 border outline-none border-gray-300 bg-white text-black rounded-lg block p-3"></textarea>
                             </div>
                             <div class="">
-                                <img v-if="imageUrl" :src="imageUrl" alt="Uploaded Image" />
+                                <img v-if="imageUrl" :src="imageUrl" alt="Uploaded Image" class="w-[150px] h-[150px]"/>
                             </div>
                         </div>
                         <div class="flex justify-end items-center">
@@ -82,7 +86,7 @@
                                 <th scope="col" class="px-4 py-3">Наименование товара</th>
                                 <th scope="col" class="px-4 py-3">Цена продукта</th>
                                 <th scope="col" class="px-4 py-3">Изображение продукта</th>
-                                <th scope="col" class="px-10 py-3 text-right">Удалить / Обновить</th>
+                                <th scope="col" class="px-10 py-3">Удалить / Обновить</th>
                             </tr>
                         </thead>
                         <tbody class="">
@@ -90,9 +94,9 @@
                                 <td class="px-4 py-3">{{el.type}}</td>
                                 <td class="px-4 py-3">{{el.title}}</td>
                                 <td class="px-4 py-3">{{el.price}}</td>
-                                <td class="px-4 py-3"><img :src="`http://114.29.237.91:8081/api/v1/attachment/get-image/${el.productIDs}`" alt="" class="w-[10%]"></td>
+                                <td class="px-4 py-3 w-[10%]"><img :src="el.mediaUrl" alt="" class="w-[80%] mx-auto"></td>
                                 <td class="px-4 py-3 text-[20px]">
-                                    <div  class="bg-white  flex justify-end items-center">
+                                    <div  class="bg-white  flex justify-center items-center">
                                         <button @click="showModal(el.id)" >
                                             <div class="w-6 h-6 py-1 rounded-md bg-red-500 mr-4 cursor-pointer">
                                                 <i class="bx bx-trash text-white text-[16px] flex items-center justify-center"></i>
@@ -167,14 +171,15 @@
     let computedList = vueRef([])
     const file = vueRef(null);
     const imageUrl = vueRef('');
-    const uploadProgress = vueRef(0);
+    
 
     const contactInfo = reactive({
         type: '',
         title: '',
-        description: '',
         price: '',
-        mediaId: ''
+        description: '',
+        mass: '',
+        mediaUrl: ''
     })
     console.log(contactInfo.type)
     const toggleModal = () => {
@@ -182,9 +187,10 @@
             isUpdate.value = false
             contactInfo.type = ''
             contactInfo.title = ''
-            contactInfo.description = ''
             contactInfo.price = ''
-            contactInfo.mediaId = ''
+            contactInfo.description = ''
+            contactInfo.mass = ''
+            contactInfo.mediaUrl = ''
         }
         modal.value = !modal.value
     }
@@ -207,18 +213,20 @@
         const contact = {
             type: contactInfo.type,
             title: contactInfo.title,
-            description: contactInfo.description,
             price: contactInfo.price,
-            mediaId: imageUrl
+            description: contactInfo.description,
+            mass: contactInfo.mass,
+            mediaUrl: imageUrl.value
         }
 
         useProject.create(contact).then((res)=>{
             if(res.status == 201){
                 contactInfo.type = ''
                 contactInfo.title = ''
-                contactInfo.description = ''
                 contactInfo.price = ''
-                contactInfo.mediaId = ''
+                contactInfo.description = ''
+                contactInfo.mass = ''
+                imageUrl.value=''
                 toggleModal()
                 updateList();
             }
@@ -236,18 +244,20 @@
         const contact = {
             type: contactInfo.type,
             title: contactInfo.title,
-            description: contactInfo.description,
             price: contactInfo.price,
-            mediaId: contactInfo.mediaId
+            description: contactInfo.description,
+            mass: contactInfo.mass,
+            mediaUrl: contactInfo.mediaUrl
         }
 
         useProject.update(id, contact).then((res)=>{
             if(res.status == 200){
                 contactInfo.type=''
                 contactInfo.title=''
-                contactInfo.description=''
                 contactInfo.price=''
-                contactInfo.mediaId=''
+                contactInfo.description=''
+                contactInfo.mass=''
+                contactInfo.mediaUrl=''
                 isUpdate.value = false;
                 updateList();
                 toggleModal()
@@ -280,9 +290,10 @@
         const foundContact = store.findOne(id)
         contactInfo.type = foundContact[0].type
         contactInfo.title = foundContact[0].title
-        contactInfo.description = foundContact[0].description
         contactInfo.price = foundContact[0].price
-        contactInfo.mediaId = foundContact[0].mediaId
+        contactInfo.description = foundContact[0].description
+        contactInfo.mass = foundContact[0].mass
+        contactInfo.mediaUrl = foundContact[0].mediaUrl
         toggleModal();
     }
 
@@ -295,7 +306,7 @@
     if (file.value) {
         try {
         console.log(file.value);
-        const storageRef = firebaseRef(storage, 'images/' + file.value.name);
+        const storageRef = firebaseRef(storage, 'products/' + file.value.name);
         const uploadTask = uploadBytes(storageRef, file.value);
 
         uploadTask
