@@ -28,5 +28,11 @@ export const navLinks = [
       title: "Цены на услуги",
       link: "/service_price",
       icon: "bx bx-cog"
+  },
+  {
+      id: 6,
+      title: "Финанс",
+      link: "/finans",
+      icon: "bx bxs-badge-dollar"
   }
 ]

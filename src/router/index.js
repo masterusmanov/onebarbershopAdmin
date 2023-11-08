@@ -33,6 +33,11 @@ const router = createRouter({
           path: '/service_price',
           name: 'service_price',
           component: () => import('../views/ServicePrice/ServicePrice.vue')
+        },
+        {
+          path: '/finans',
+          name: 'finans',
+          component: () => import('../views/Finans/Finans.vue')
         }
       ],
       beforeEnter:((to, from, next) => {
